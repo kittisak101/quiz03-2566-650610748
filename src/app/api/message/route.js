@@ -5,26 +5,34 @@ import { NextResponse } from "next/server";
 
 export const GET = async (request) => {
   readDB();
-
-  // return NextResponse.json(
-  //   {
-  //     ok: false,
-  //     message: `Room is not found`,
-  //   },
-  //   { status: 404 }
-  // );
+  if (!roomId) {
+    return NextResponse.json(
+      {
+        ok: false,
+        message: `Room is not found`,
+      },
+      { status: 404 }
+    );
+  } else {
+    return NextResponse.json({
+      ok: true,
+      messages,
+    });
+  }
 };
 
 export const POST = async (request) => {
+  const body = await request.json();
+  const Result = readDB.safeParse(body);
   readDB();
-
-  // return NextResponse.json(
-  //   {
-  //     ok: false,
-  //     message: `Room is not found`,
-  //   },
-  //   { status: 404 }
-  // );
+  if (Result.success === false)
+    return NextResponse.json(
+      {
+        ok: false,
+        message: `Room is not found`,
+      },
+      { status: 404 }
+    );
 
   const messageId = nanoid();
 
@@ -32,7 +40,7 @@ export const POST = async (request) => {
 
   return NextResponse.json({
     ok: true,
-    // messageId,
+    messageId,
     message: "Message has been sent",
   });
 };
